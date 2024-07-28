@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Finance_App</string>
+    <string name="title">Historial</string>
+    <string name="category">Categoria</string>
+    <string name="count">Monto</string>
+    <string name="date">Fecha</string>
+    <string name="addBtn">Agregar</string>
+
+    <string-array name="category_array">
+        <item>Carro</item>
+        <item>Comida</item>
+        <item>Internet</item>
+        <item>Luz</item>
+        <item>Regalo</item>
+        <item>Salida</item>
+        <item>Otros</item>
+    </string-array>
+</resources>
