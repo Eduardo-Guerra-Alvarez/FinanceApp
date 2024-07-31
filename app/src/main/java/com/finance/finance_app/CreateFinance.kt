@@ -1,6 +1,8 @@
 package com.finance.finance_app
 
+import android.icu.util.Calendar
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -19,6 +21,10 @@ class CreateFinance : AppCompatActivity() {
     private lateinit var editTxtSpend:EditText
     private lateinit var editTxtDate:EditText
     private lateinit var btnAdd:Button
+    val calendar = Calendar.getInstance()
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val month = calendar.get(Calendar.MONTH)
+    val year = calendar.get(Calendar.YEAR)
 
     private lateinit var db:FinanceDatabaseHelper
 
@@ -37,6 +43,8 @@ class CreateFinance : AppCompatActivity() {
 
     private fun listeners() {
         editTxtDate = findViewById(R.id.editTextDate)
+        val txt = "$day/$month/$year"
+        editTxtDate.setText(txt)
         editTxtDate.setOnClickListener{
             showDataPicker()
         }
@@ -57,7 +65,21 @@ class CreateFinance : AppCompatActivity() {
         editTxtDescription = findViewById((R.id.editTextDescription))
 
         btnAdd = findViewById(R.id.btnAddFinance)
-        btnAdd.setOnClickListener { saveFinance() }
+        btnAdd.setOnClickListener {
+
+            val category = selectCategory().toString()
+            val subcategory = ""
+            val description = editTxtDescription.text.toString()
+            val spend = editTxtSpend.text.toString()
+            val date = editTxtDate.text.toString()
+
+            if((spend == "") || (date == "")) {
+                Log.i("Example", "Enntro")
+                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+            } else  {
+                saveFinance(category, subcategory, description, spend, date)
+            }
+             }
     }
 
     private fun showDataPicker() {
@@ -70,21 +92,16 @@ class CreateFinance : AppCompatActivity() {
         editTxtDate.setText(txt)
     }
 
-    private fun saveFinance() {
-        val category = selectCategory().toString()
-        val subcategory = ""
-        val description = editTxtDescription.text.toString()
-        val spend = editTxtSpend.text.toString()
-        val date = editTxtDate.text.toString()
-
+    private fun saveFinance(
+        category:String,
+        subcategory:String,
+        description:String,
+        spend:String,
+        date:String
+    ) {
         val finance = Finance(null,category, subcategory, description, spend.toFloat(), date)
-
-        if((spend == "") || (date == "")) {
-            Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
-        } else {
-            db.insertFinance(finance)
-            finish()
-        }
+        db.insertFinance(finance)
+        finish()
     }
 
     private fun selectCategory(): String? {

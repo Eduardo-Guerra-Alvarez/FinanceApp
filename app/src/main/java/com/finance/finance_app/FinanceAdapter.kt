@@ -31,7 +31,7 @@ class FinanceAdapter (private var financeList:MutableList<Finance>, context: Con
         val finance = financeList[position]
         finance.id?.let { db.deleteFinance(it) }
         refreshData(db.getFinances())
-        Toast.makeText(holder.itemView.context, "Se elimino exitosamente", Toast.LENGTH_SHORT)
+        Toast.makeText(holder.itemView.context, "Se elimino exitosamente", Toast.LENGTH_SHORT).show()
     }
 
     fun refreshData(newFinance: List<Finance>) {
