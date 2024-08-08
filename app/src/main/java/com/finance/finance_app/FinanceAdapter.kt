@@ -31,7 +31,18 @@ class FinanceAdapter (private var financeList:MutableList<Finance>, context: Con
         val finance = financeList[position]
         finance.id?.let { db.deleteFinance(it) }
         refreshData(db.getFinances())
-        Toast.makeText(holder.itemView.context, "Se elimino exitosamente", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(holder.itemView.context, "Se elimino exitosamente", Toast.LENGTH_SHORT).show()
+        Snackbar.make(holder.itemView, "Elemento eliminado", Snackbar.LENGTH_LONG)
+            .setAction("Deshacer") {
+                // Llama a la función de deshacer del adaptador
+                undoSwipe(finance)
+            }
+            .show()
+    }
+
+    fun undoSwipe(finance: Finance) {
+        db.reInsertFinance(finance)
+        refreshData(db.getFinances())
     }
 
     fun refreshData(newFinance: List<Finance>) {

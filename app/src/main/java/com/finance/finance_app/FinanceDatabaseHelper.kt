@@ -73,4 +73,19 @@ class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         db.delete(TABLE_NAME, whereClause, whereArgs)
         db.close()
     }
+
+    fun reInsertFinance(finance: Finance) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_ID, finance.id)
+            put(COLUMN_CATEGORY, finance.category)
+            put(COLUMN_SUBCATEGORY, finance.subcategory)
+            put(COLUMN_DESCRIPTION, finance.description)
+            put(COLUMN_SPEND, finance.spend)
+            put(COLUMN_DATE, finance.date)
+        }
+
+        db.insert(TABLE_NAME, null, values)
+        db.close()
+    }
 }
