@@ -10,4 +10,6 @@
 
     <color name="black_gray">#545454</color>
     <color name="principal_color">#474747</color>
+
+    <color name="red_delete">#c94b4d</color>
 </resources>

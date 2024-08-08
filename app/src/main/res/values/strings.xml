@@ -7,12 +7,13 @@
     <string name="addBtn">Agregar</string>
 
     <string-array name="category_array">
-        <item>Carro</item>
-        <item>Comida</item>
-        <item>Internet</item>
-        <item>Luz</item>
-        <item>Regalo</item>
-        <item>Salida</item>
+        <item>Alimentos</item>
+        <item>Entretenimiento</item>
+        <item>Transporte</item>
+        <item>Gastos Fijos</item>
+        <item>Salud</item>
+        <item>Mascotas</item>
+        <item>Vivienda</item>
         <item>Otros</item>
     </string-array>
 </resources>

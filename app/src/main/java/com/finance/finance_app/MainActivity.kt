@@ -1,10 +1,16 @@
 package com.finance.finance_app
 
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -61,6 +67,39 @@ class MainActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: ViewHolder, position: Int) {
                 financeAdapter.onSwiped(viewHolder, position)
             }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val itemView = viewHolder.itemView
+                    val icon = ContextCompat.getDrawable(applicationContext, R.drawable.baseline_delete_24)
+                    val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
+                    val iconTop = itemView.top + (itemView.height - icon.intrinsicHeight) / 2
+                    val iconButton = iconTop + icon.intrinsicHeight
+
+                    if (dX < 0) {
+                        val iconLeft = itemView.right - iconMargin - icon.intrinsicWidth
+                        val iconRight = itemView.right - iconMargin
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconButton)
+
+                        val background = ColorDrawable(getColor(R.color.red_delete))
+                        background.setBounds(itemView.right +  dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                        background.draw(c)
+                        icon.draw(c)
+                    }
+                }
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+
+            }
+
         })
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
