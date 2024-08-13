@@ -23,7 +23,7 @@ class CreateFinance : AppCompatActivity() {
     private lateinit var btnAdd:Button
     val calendar = Calendar.getInstance()
     val day = calendar.get(Calendar.DAY_OF_MONTH)
-    val month = calendar.get(Calendar.MONTH)
+    val month = calendar.get(Calendar.MONTH)+1 // add 1
     val year = calendar.get(Calendar.YEAR)
 
     private lateinit var db:FinanceDatabaseHelper

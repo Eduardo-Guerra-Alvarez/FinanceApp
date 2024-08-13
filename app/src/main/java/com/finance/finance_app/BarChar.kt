@@ -1,10 +1,15 @@
 package com.finance.finance_app
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +26,8 @@ class BarChar : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var chart: LineChart
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,8 +40,30 @@ class BarChar : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val view = inflater.inflate(R.layout.fragment_bar_char,container, false)
+        chart = view.findViewById(R.id.lineChar)
+
+        // Create Data example
+        val entries = ArrayList<Entry>()
+        entries.add(Entry(0f, 4f))
+        entries.add(Entry(1f, 8f))
+
+        // DataSet
+        val dataSet = LineDataSet(entries, "Mi grafico")
+        dataSet.color = Color.BLUE
+        dataSet.lineWidth = 2f
+
+        val data = LineData(dataSet)
+
+        chart.data = data
+        chart.description.isEnabled = false
+        chart.invalidate()
+
+
+        return view
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bar_char, container, false)
+        //return inflater.inflate(R.layout.fragment_bar_char, container, false)
     }
 
     companion object {
