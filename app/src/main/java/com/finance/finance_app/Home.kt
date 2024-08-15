@@ -76,6 +76,7 @@ class Home : Fragment() {
                 financeAdapter.onSwiped(viewHolder, position)
             }
 
+            // to draw when swipe on left
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,
@@ -87,7 +88,7 @@ class Home : Fragment() {
             ) {
                 if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val itemView = viewHolder.itemView
-                    val icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_delete_24)
+                    val icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_delete_24) // icon trash color white
                     val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
                     val iconTop = itemView.top + (itemView.height - icon.intrinsicHeight) / 2
                     val iconButton = iconTop + icon.intrinsicHeight
@@ -96,22 +97,19 @@ class Home : Fragment() {
                         val iconLeft = itemView.right - iconMargin - icon.intrinsicWidth
                         val iconRight = itemView.right - iconMargin
                         icon.setBounds(iconLeft, iconTop, iconRight, iconButton)
-                        val background = ColorDrawable(ContextCompat.getColor(requireContext(), R.color.red_delete))
+                        val background = ColorDrawable(ContextCompat.getColor(requireContext(), R.color.red_delete)) // red color
                         background.setBounds(itemView.right +  dX.toInt(), itemView.top, itemView.right, itemView.bottom)
                         background.draw(c)
                         icon.draw(c)
                     }
                 }
-
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-
             }
-
         })
         itemTouchHelper.attachToRecyclerView(recyclerView)
-
     }
 
+    // load data when show view
     override fun onResume() {
         super.onResume()
         financeAdapter.refreshData(db.getFinances())

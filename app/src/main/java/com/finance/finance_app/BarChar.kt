@@ -15,18 +15,18 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 
 enum class MonthOfYear(val num: Int) {
-    ENERO(1),
-    FEBRERO(2),
-    MARZO(3),
-    ARBIL(4),
-    MAYO(5),
-    JUNIO(6),
-    JULIO(7),
-    AGOSTO(8),
-    SEPTIEMBRE(9),
-    OCTUBRE(10),
-    NOVIEMBRE(11),
-    DICIEMBRE(12);
+    ENE(1),
+    FEB(2),
+    MAR(3),
+    ABR(4),
+    MAY(5),
+    JUN(6),
+    JUL(7),
+    AGO(8),
+    SEP(9),
+    OCT(10),
+    NOV(11),
+    DIC(12);
 
     companion object {
         fun fromValue(value: Int): MonthOfYear? {
@@ -68,26 +68,46 @@ class BarChar : Fragment() {
 
 
         // Create Data example
-        var i:Int = 1
+        var i:Int = 0
         val months = ArrayList<String>()
         val entries = ArrayList<BarEntry>()
+
         for ((month, spend) in spendByMonth) {
             months.add(MonthOfYear.fromValue(month).toString())
             entries.add(BarEntry(i.toFloat(), spend))
             i++
         }
 
+        val colors = listOf(
+            Color.parseColor("#B29462"),
+            Color.parseColor("#95A5A6"),
+            Color.parseColor("#F2F2F2"),
+            Color.parseColor("#92ba92"),
+            Color.parseColor("#008585")
+        )
+
         // DataSet
-        val dataSet = BarDataSet(entries, "Gastos por mes")
-        dataSet.color = Color.RED
+        val dataSet = BarDataSet(entries, "")
+        dataSet.colors = colors
         dataSet.valueTextColor = Color.WHITE
         dataSet.valueTextSize = 16f
 
         val data = BarData(dataSet)
 
+        val xAxis = barChart.xAxis
+        val yAxis = barChart.axisLeft
+        barChart.axisRight.textColor = Color.WHITE
+
         barChart.data = data
         barChart.description.isEnabled = false
-        val xAxis = barChart.xAxis
+
+        // put letters in white color
+        xAxis.gridColor = Color.WHITE
+        xAxis.textColor = Color.WHITE
+        yAxis.textColor = Color.WHITE
+        yAxis.gridColor = Color.WHITE
+
+
         xAxis.valueFormatter = IndexAxisValueFormatter(months)
         xAxis.granularity = 1f // a value for each bar
         barChart.invalidate()

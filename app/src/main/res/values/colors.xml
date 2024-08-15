@@ -11,5 +11,13 @@
     <color name="black_gray">#545454</color>
     <color name="principal_color">#474747</color>
 
+    <!-- color to delete element -->
     <color name="red_delete">#c94b4d</color>
+
+    <!-- Colors for barchart -->
+    <color name="orange_c7">#c7522a</color>
+    <color name="brown_e5">#e5c185</color>
+    <color name="brown_fb">#fbf2c4</color>
+    <color name="blue_74">#74a892</color>
+    <color name="blue_00">#008585</color>
 </resources>
