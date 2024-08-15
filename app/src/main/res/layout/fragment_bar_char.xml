@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".BarChar">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/lineChar"
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

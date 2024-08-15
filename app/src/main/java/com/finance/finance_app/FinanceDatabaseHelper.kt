@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import java.util.Objects
 
 class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
     companion object {
@@ -16,12 +17,10 @@ class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         private const val COLUMN_DESCRIPTION = "description"
         private const val COLUMN_SPEND = "spend"
         private const val COLUMN_DATE = "date"
-
-
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val createTable = "CREATE TABLE $TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_CATEGORY TEXT, $COLUMN_SUBCATEGORY TEXT, $COLUMN_DESCRIPTION TEXT, $COLUMN_SPEND REAL, $COLUMN_DATE TEXT)"
+        val createTable = "CREATE TABLE $TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_CATEGORY TEXT, $COLUMN_SUBCATEGORY TEXT, $COLUMN_DESCRIPTION TEXT, $COLUMN_SPEND REAL, $COLUMN_DATE DATE)"
         db?.execSQL(createTable)
     }
 
@@ -87,5 +86,20 @@ class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
 
         db.insert(TABLE_NAME, null, values)
         db.close()
+    }
+
+    fun getSpendByMonth(): List<SpendByMonth>{
+        val spendList = mutableListOf<SpendByMonth>()
+        val db = readableDatabase
+        val query = "SELECT strftime('%m', date) as month, SUM(spend) as spend_month FROM $TABLE_NAME GROUP BY month"
+        val cursor = db.rawQuery(query, null)
+        while (cursor.moveToNext()) {
+            val month = cursor.getString(cursor.getColumnIndexOrThrow("month"))
+            val spend_month = cursor.getString(cursor.getColumnIndexOrThrow("spend_month"))
+
+            val spend = SpendByMonth(month.toInt(), spend_month.toFloat())
+            spendList.add(spend)
+        }
+        return spendList
     }
 }

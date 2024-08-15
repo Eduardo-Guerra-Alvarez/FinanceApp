@@ -2,39 +2,47 @@ package com.finance.finance_app
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.utils.ColorTemplate
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+enum class MonthOfYear(val num: Int) {
+    ENERO(1),
+    FEBRERO(2),
+    MARZO(3),
+    ARBIL(4),
+    MAYO(5),
+    JUNIO(6),
+    JULIO(7),
+    AGOSTO(8),
+    SEPTIEMBRE(9),
+    OCTUBRE(10),
+    NOVIEMBRE(11),
+    DICIEMBRE(12);
 
-/**
- * A simple [Fragment] subclass.
- * Use the [BarChar.newInstance] factory method to
- * create an instance of this fragment.
- */
+    companion object {
+        fun fromValue(value: Int): MonthOfYear? {
+            return values().firstOrNull { it.num == value }
+        }
+    }
+}
+
 class BarChar : Fragment() {
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var chart: LineChart
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var db: FinanceDatabaseHelper
+    private lateinit var barChart: BarChart
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,23 +50,10 @@ class BarChar : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_bar_char,container, false)
-        chart = view.findViewById(R.id.lineChar)
 
-        // Create Data example
-        val entries = ArrayList<Entry>()
-        entries.add(Entry(0f, 4f))
-        entries.add(Entry(1f, 8f))
 
-        // DataSet
-        val dataSet = LineDataSet(entries, "Mi grafico")
-        dataSet.color = Color.BLUE
-        dataSet.lineWidth = 2f
-
-        val data = LineData(dataSet)
-
-        chart.data = data
-        chart.description.isEnabled = false
-        chart.invalidate()
+        db = FinanceDatabaseHelper(requireContext())
+        getDataByMonth(view)
 
 
         return view
@@ -66,23 +61,39 @@ class BarChar : Fragment() {
         //return inflater.inflate(R.layout.fragment_bar_char, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BarChar.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            BarChar().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun getDataByMonth(view: View) {
+        val spendByMonth = db.getSpendByMonth().toMutableList()
+
+        barChart = view.findViewById(R.id.barChar)
+
+
+        // Create Data example
+        var i:Int = 1
+        val months = ArrayList<String>()
+        val entries = ArrayList<BarEntry>()
+        for ((month, spend) in spendByMonth) {
+            months.add(MonthOfYear.fromValue(month).toString())
+            entries.add(BarEntry(i.toFloat(), spend))
+            i++
+        }
+
+        // DataSet
+        val dataSet = BarDataSet(entries, "Gastos por mes")
+        dataSet.color = Color.RED
+        dataSet.valueTextColor = Color.WHITE
+        dataSet.valueTextSize = 16f
+
+        val data = BarData(dataSet)
+
+        barChart.data = data
+        barChart.description.isEnabled = false
+        val xAxis = barChart.xAxis
+        xAxis.valueFormatter = IndexAxisValueFormatter(months)
+        xAxis.granularity = 1f // a value for each bar
+        barChart.invalidate()
+
+        Log.i("ListaSpend", months.toString())
+
     }
+
 }

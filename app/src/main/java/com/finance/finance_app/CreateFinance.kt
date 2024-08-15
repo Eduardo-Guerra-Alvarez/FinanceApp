@@ -43,7 +43,7 @@ class CreateFinance : AppCompatActivity() {
 
     private fun listeners() {
         editTxtDate = findViewById(R.id.editTextDate)
-        val txt = "$day/$month/$year"
+        val txt = String.format("%d-%02d-%02d", year, month, day)
         editTxtDate.setText(txt)
         editTxtDate.setOnClickListener{
             showDataPicker()
@@ -88,7 +88,8 @@ class CreateFinance : AppCompatActivity() {
     }
 
     private fun onDateSelected(day:Int, month:Int, year:Int) {
-        val txt = "$day/$month/$year"
+        val txt = String.format("%d-%02d-%02d", year, month + 1, day)
+        //val txt = "$year-$month-$day"
         editTxtDate.setText(txt)
     }
 
