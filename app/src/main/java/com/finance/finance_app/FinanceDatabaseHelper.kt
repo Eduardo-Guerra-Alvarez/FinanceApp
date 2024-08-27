@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import java.util.Objects
 
 class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
@@ -88,10 +89,22 @@ class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         db.close()
     }
 
-    fun getSpendByMonth(): List<SpendByMonth>{
+    fun getYears(): List<String> {
+        val yearsList = mutableListOf<String>()
+        val db = readableDatabase
+        val query = "SELECT strftime('%Y', date) as year FROM $TABLE_NAME GROUP BY year"
+        val cursor = db.rawQuery(query, null)
+        while (cursor.moveToNext()) {
+            val year = cursor.getString(cursor.getColumnIndexOrThrow("year"))
+            yearsList.add(year)
+        }
+        return yearsList
+    }
+
+    fun getSpendByMonth(yearWhere: String): List<SpendByMonth>{
         val spendList = mutableListOf<SpendByMonth>()
         val db = readableDatabase
-        val query = "SELECT strftime('%m', date) as month, SUM(spend) as spend_month FROM $TABLE_NAME GROUP BY month"
+        val query = "SELECT strftime('%m', date) as month, strftime('%Y', date) as year, SUM(spend) as spend_month FROM $TABLE_NAME WHERE year = '$yearWhere'  GROUP BY month"
         val cursor = db.rawQuery(query, null)
         while (cursor.moveToNext()) {
             val month = cursor.getString(cursor.getColumnIndexOrThrow("month"))
@@ -100,6 +113,24 @@ class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
             val spend = SpendByMonth(month.toInt(), spend_month.toFloat())
             spendList.add(spend)
         }
+
+        Log.i("data que trae", spendList.toString())
+        return spendList
+    }
+
+    fun getSpendByCategory(): List<SpendByCategory> {
+        val spendList = mutableListOf<SpendByCategory>()
+        val db = readableDatabase
+        val query = "SELECT category, SUM(spend) as spend_category FROM $TABLE_NAME GROUP BY category"
+        val cursor = db.rawQuery(query, null)
+        while (cursor.moveToNext()) {
+            val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
+            val spend_category = cursor.getString(cursor.getColumnIndexOrThrow("spend_category"))
+
+            val spend = SpendByCategory(category, spend_category.toFloat())
+            spendList.add(spend)
+        }
+
         return spendList
     }
 }

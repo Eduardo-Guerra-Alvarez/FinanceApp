@@ -111,8 +111,8 @@ class CreateFinance : AppCompatActivity() {
         if (selectedPosition != -1) {
             var selectedString: String? = null
             if (spinnerCategory.adapter is ArrayAdapter<*>) {
-                val adapter = spinnerCategory.adapter as ArrayAdapter<String>
-                selectedString = adapter.getItem(selectedPosition)
+                val adapter = spinnerCategory.adapter as ArrayAdapter<*>
+                selectedString = adapter.getItem(selectedPosition).toString()
             } else {
                 selectedString = spinnerCategory.selectedItem as String
             }
