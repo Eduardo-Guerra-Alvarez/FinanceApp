@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Spinner
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
@@ -22,10 +23,12 @@ class BarChar : Fragment() {
 
     private lateinit var db: FinanceDatabaseHelper
     private lateinit var barChart: BarChart
-    private lateinit var selectYear: Spinner
+    private lateinit var editYear: EditText
 
     private val calendar = android.icu.util.Calendar.getInstance()
     private val year = calendar.get(android.icu.util.Calendar.YEAR)
+
+    private var selectedYear = year
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,8 +38,7 @@ class BarChar : Fragment() {
         val view = inflater.inflate(R.layout.fragment_bar_char,container, false)
         db = FinanceDatabaseHelper(requireContext())
         listening(view)
-        getSelectYear(view)
-        getDataByMonth(view, year.toString())
+        getDataByMonth(year)
 
         return view
         // Inflate the layout for this fragment
@@ -44,39 +46,32 @@ class BarChar : Fragment() {
     }
 
     private fun listening(view: View) {
-        val years = db.getYears()
-        selectYear = view.findViewById(R.id.selectYear)
-        val adapter = ArrayAdapter(
-            view.context,
-            android.R.layout.simple_spinner_item,
-            years)
-        selectYear.adapter = adapter
+        barChart = view.findViewById(R.id.barChar)
+        editYear = view.findViewById(R.id.editTxtYear)
+        editYear.setText(year.toString())
 
-        val currentPosition = years.indexOf(year.toString())
-        selectYear.setSelection(currentPosition)
-    }
-
-    private fun getSelectYear(newView: View) {
-        selectYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long)
-            {
-                val yearSelected = parent?.getItemAtPosition(position).toString()
-                // Aquí puedes realizar alguna acción con el año seleccionado, por ejemplo, hacer una consulta a la base de datos
-                getDataByMonth(newView, yearSelected)
-                Log.d("Año seleccionado", yearSelected)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Este método se llama cuando no se selecciona ningún elemento
-            }
+        editYear.setOnClickListener {
+            showDataPicker()
         }
     }
 
+    private fun showDataPicker() {
+        val customPicker = YearPickerDialog { year ->
+            selectedYear = year
+            onDateSelected(year)
+        }
 
-    private fun getDataByMonth(view: View, year: String) {
-        val spendByMonth = db.getSpendByMonth(year).toMutableList()
+        customPicker.setInitialDate(selectedYear)
+        customPicker.show(childFragmentManager, "datePicker")
+    }
 
-        barChart = view.findViewById(R.id.barChar)
+    private fun onDateSelected(year:Int) {
+        editYear.setText(year.toString())
+        getDataByMonth(year)
+    }
+
+    private fun getDataByMonth(year: Int) {
+        val spendByMonth = db.getSpendByMonth(year.toString()).toMutableList()
 
         // Create Data example
         var i:Int = 0

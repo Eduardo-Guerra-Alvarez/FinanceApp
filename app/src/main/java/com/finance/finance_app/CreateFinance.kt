@@ -2,7 +2,6 @@ package com.finance.finance_app
 
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -74,7 +73,6 @@ class CreateFinance : AppCompatActivity() {
             val date = editTxtDate.text.toString()
 
             if((spend == "") || (date == "")) {
-                Log.i("Example", "Enntro")
                 Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
             } else  {
                 saveFinance(category, subcategory, description, spend, date)
@@ -89,7 +87,6 @@ class CreateFinance : AppCompatActivity() {
 
     private fun onDateSelected(day:Int, month:Int, year:Int) {
         val txt = String.format("%d-%02d-%02d", year, month + 1, day)
-        //val txt = "$year-$month-$day"
         editTxtDate.setText(txt)
     }
 

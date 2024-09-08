@@ -29,13 +29,18 @@
                 android:textSize="20sp"
                 android:text="Seleccionar Año:"/>
 
-            <Spinner
-                android:id="@+id/selectYear"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
+            <EditText
+                android:id="@+id/editTxtYear"
+                android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:spinnerMode="dropdown" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:ems="10"
+                android:textAlignment="center"
+                android:inputType="date"
+                android:clickable="false"
+                android:focusable="false"/>
         </LinearLayout>
 
 

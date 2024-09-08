@@ -1,45 +1,33 @@
 package com.finance.finance_app
 
 import android.graphics.Color
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [PieChar.newInstance] factory method to
- * create an instance of this fragment.
- */
 class PieChar : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     private lateinit var db: FinanceDatabaseHelper
     private lateinit var pieChart: PieChart
+    private lateinit var editMonthYear: EditText
+    private val calendar = Calendar.getInstance()
+    private val year = calendar.get(Calendar.YEAR)
+    private val month = calendar.get(Calendar.MONTH) + 1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var selectedMonth = month  // selected month for default
+    private var selectedYear = year  // selected year for default
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,18 +36,51 @@ class PieChar : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_pie_char, container, false)
 
+        // init db
         db = FinanceDatabaseHelper(requireContext())
-        getDataByCategory(view)
+        listener(view)
+        getDataByCategory(month, year)
 
         return view
     }
 
-    private fun getDataByCategory(view: View) {
-        val spendByCategory = db.getSpendByCategory().toMutableList()
-
-        Log.i("category", spendByCategory.toString())
-
+    // function listener where we init piechart and editMonthYear
+    private fun listener(view: View) {
         pieChart = view.findViewById(R.id.pieChar)
+        editMonthYear = view.findViewById(R.id.editTextMonthYear)
+        val txt = String.format("%d-%02d", year, month)
+        editMonthYear.setText(txt)
+
+        // on Click to show Dialog
+        editMonthYear.setOnClickListener {
+            showDatapicker()
+        }
+    }
+
+
+    // Show dialog picker
+    private fun showDatapicker() {
+        // get data and show the dialog
+        val customPicker = MonthYearPickerDialog { month, year ->
+            selectedMonth = month // pass month selected
+            selectedYear = year // pass year selected
+            onDateSelected(month, year)
+        }
+        customPicker.setInitialDate(selectedMonth, selectedYear)
+        customPicker.show(childFragmentManager , "datePicker")
+    }
+
+
+    private fun onDateSelected(month:Int, year:Int) {
+        val txt = String.format("%d-%02d", year, month)
+        editMonthYear.setText(txt)
+        getDataByCategory(month, year)
+    }
+
+    private fun getDataByCategory(month: Int, year: Int) {
+        val month_zero = String.format("%02d", month)
+        Log.i("month_year", "Este es el mes $month_zero y este es el año $year")
+        val spendByCategory = db.getSpendByCategory(month_zero, year.toString()).toMutableList()
 
         //Create data example
         val entries = ArrayList<PieEntry>()
@@ -93,23 +114,4 @@ class PieChar : Fragment() {
         pieChart.invalidate()
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PieChar.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PieChar().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

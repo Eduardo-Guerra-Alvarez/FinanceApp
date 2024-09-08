@@ -118,10 +118,11 @@ class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         return spendList
     }
 
-    fun getSpendByCategory(): List<SpendByCategory> {
+    fun getSpendByCategory(month:String, year:String): List<SpendByCategory> {
         val spendList = mutableListOf<SpendByCategory>()
         val db = readableDatabase
-        val query = "SELECT category, SUM(spend) as spend_category FROM $TABLE_NAME GROUP BY category"
+        //"SELECT category, SUM(spend) as spend_category, strftime('%m', date) as month, strftime('%Y', date) as year FROM $TABLE_NAME WHERE month = $month and year = $year GROUP BY category, month, year"
+        val query = "SELECT category, SUM(spend) as spend_category, strftime('%m', date) as month, strftime('%Y', date) as year FROM $TABLE_NAME WHERE month = '$month' AND year = '$year' GROUP BY category"
         val cursor = db.rawQuery(query, null)
         while (cursor.moveToNext()) {
             val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
