@@ -48,7 +48,8 @@ class PieChar : Fragment() {
     private fun listener(view: View) {
         pieChart = view.findViewById(R.id.pieChar)
         editMonthYear = view.findViewById(R.id.editTextMonthYear)
-        val txt = String.format("%d-%02d", year, month)
+        val monthLetter = MonthOfYear.fromValue(month)
+        val txt = String.format("$monthLetter $year")
         editMonthYear.setText(txt)
 
         // on Click to show Dialog
@@ -72,7 +73,8 @@ class PieChar : Fragment() {
 
 
     private fun onDateSelected(month:Int, year:Int) {
-        val txt = String.format("%d-%02d", year, month)
+        val monthLetter = MonthOfYear.fromValue(month)
+        val txt = String.format("$monthLetter $year")
         editMonthYear.setText(txt)
         getDataByCategory(month, year)
     }

@@ -21,18 +21,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:textSize="20sp"
-                android:text="Selecciona Mes y Año:"/>
             <EditText
                 android:id="@+id/editTextMonthYear"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:textAlignment="center"
+                android:textSize="30sp"
                 android:background="@null"
                 android:inputType="date"
                 android:clickable="false"
