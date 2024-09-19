@@ -3,6 +3,7 @@ package com.finance.finance_app
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import java.util.Objects
@@ -66,6 +67,40 @@ class FinanceDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         db.close()
         return financeList
     }
+
+    fun getFinancesByPage(page: Int, itemsPerPage: Int): List<Finance> {
+        val offset = (page - 1) * itemsPerPage
+        val finances = mutableListOf<Finance>()
+
+        try {
+            val db = this.readableDatabase
+            val query = "SELECT * $TABLE_NAME LIMIT $itemsPerPage OFFSET $offset ORDER BY ID DESC"
+            val cursor = db.rawQuery(query, null)
+
+            while (cursor.moveToNext()) {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+                val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
+                val subcategory = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SUBCATEGORY))
+                val description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+                val spend = cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_SPEND))
+                val date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))
+
+                val finance = Finance(id,category, subcategory, description, spend, date)
+                finances.add(finance)
+
+                cursor.close()
+                db.close()
+            }
+        } catch (e: SQLiteException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+
+        return finances
+    }
+
     fun deleteFinance(financeID: Int) {
         val db = writableDatabase
         val whereClause = "$COLUMN_ID = ?"

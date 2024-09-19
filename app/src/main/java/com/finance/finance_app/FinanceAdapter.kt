@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
-class FinanceAdapter (private var financeList:MutableList<Finance>, context: Context) : RecyclerView.Adapter<FinanceViewHolder>() {
+class FinanceAdapter (var financeList:MutableList<Finance>, context: Context) : RecyclerView.Adapter<FinanceViewHolder>() {
 
     private var db:FinanceDatabaseHelper = FinanceDatabaseHelper(context)
 

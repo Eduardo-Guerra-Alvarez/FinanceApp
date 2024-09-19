@@ -34,9 +34,18 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title"
                     android:textColor="@color/white"
-                    android:textSize="50sp">
+                    android:textSize="50sp"/>
 
-                </TextView>
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:iconifiedByDefault="false"
+                    app:searchHintIcon="@null"
+                    app:queryHint="Search..."
+                    android:focusable="false"/>
+
+
 
             </LinearLayout>
 
@@ -44,7 +53,7 @@
                 android:id="@+id/recycleFinance"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="150dp">
+                android:layout_marginTop="200dp">
 
             </androidx.recyclerview.widget.RecyclerView>
         </androidx.cardview.widget.CardView>
