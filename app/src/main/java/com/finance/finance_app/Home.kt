@@ -26,9 +26,7 @@ class Home : Fragment() {
     private lateinit var db: FinanceDatabaseHelper
     private lateinit var financeAdapter: FinanceAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var financeList: MutableList<Finance>
     private lateinit var searchView: SearchView
-    private lateinit var searchList: ArrayList<Finance>
 
     // variables to control pagination
     private var isLoading = false
@@ -57,10 +55,8 @@ class Home : Fragment() {
                 val intent = Intent(requireActivity(), CreateFinance::class.java)
                 startActivity(intent)
             }
-
-            //initSearchView()
         } catch (e: Exception) {
-            println("Error Listener: " +  e)
+            println("Error: " +  e)
             e.printStackTrace()
         }
 
@@ -68,47 +64,36 @@ class Home : Fragment() {
 
     private fun initSearchView() {
         try {
-            searchView.clearFocus()
             searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    searchView.clearFocus()
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchList.clear()
-                    val searchText = newText!!.toLowerCase(Locale.getDefault())
-                    if(searchText.isNotEmpty()) {
-                        financeList.forEach {
-                            if(it.description.toLowerCase(Locale.getDefault()).contains(searchText)) {
-                                searchList.add(it)
-                            }
-                        }
-                        recyclerView.adapter!!.notifyDataSetChanged()
-                    } else {
-                        searchList.clear()
-                        searchList.addAll(financeList)
-                        recyclerView.adapter!!.notifyDataSetChanged()
+                    query?.let {
+                        financeAdapter.filter(it)
                     }
                     return false
                 }
 
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    newText?.let {
+                        financeAdapter.filter(it)
+                    }
+                    return false
+                }
             })
         } catch (e: Exception) {
-            println("Error SearchView: " + e)
+            println("Error: " + e)
             e.printStackTrace()
         }
     }
 
     private fun initRecycleView(){
         try {
-            financeList = db.getFinances().take(10).toMutableList()
-            searchList.addAll(financeList)
-            financeAdapter = FinanceAdapter(searchList, requireContext())
+            val financeList = db.getFinances().toMutableList()
+            financeAdapter = FinanceAdapter(financeList, requireContext())
             // show recycleView
             val layoutManager = LinearLayoutManager(requireContext())
             recyclerView.layoutManager = layoutManager
             recyclerView.adapter = financeAdapter
+
 
             isLoading = false
             currentPage = 2  // We start in the page two
@@ -139,7 +124,7 @@ class Home : Fragment() {
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
-                    financeAdapter.onSwiped(viewHolder, position)
+                    financeAdapter.onSwiped(viewHolder)
                 }
 
                 // to draw when swipe on left
@@ -173,8 +158,9 @@ class Home : Fragment() {
                 }
             })
             itemTouchHelper.attachToRecyclerView(recyclerView)
+            initSearchView()
         } catch (e: Exception) {
-            println(e)
+            println("Error al intentar imprimir: " + e)
         }
     }
 

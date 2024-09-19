@@ -77,7 +77,7 @@ class CreateFinance : AppCompatActivity() {
             } else  {
                 saveFinance(category, subcategory, description, spend, date)
             }
-             }
+        }
     }
 
     private fun showDataPicker() {

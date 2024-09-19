@@ -11,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 class FinanceAdapter (var financeList:MutableList<Finance>, context: Context) : RecyclerView.Adapter<FinanceViewHolder>() {
 
     private var db:FinanceDatabaseHelper = FinanceDatabaseHelper(context)
+    private var filteredFinanceList: MutableList<Finance> = financeList.toMutableList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FinanceViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -18,17 +19,17 @@ class FinanceAdapter (var financeList:MutableList<Finance>, context: Context) : 
     }
 
     override fun getItemCount(): Int {
-        return financeList.size
+        return filteredFinanceList.size
     }
 
     override fun onBindViewHolder(holder: FinanceViewHolder, position: Int) {
-        val item = financeList[position]
+        val item = filteredFinanceList[position]
         holder.render(item)
     }
 
-    fun onSwiped(holder: RecyclerView.ViewHolder, position: Int){
+    fun onSwiped(holder: RecyclerView.ViewHolder){
         val position = holder.adapterPosition
-        val finance = financeList[position]
+        val finance = filteredFinanceList[position]
         finance.id?.let { db.deleteFinance(it) }
         refreshData(db.getFinances())
         //Toast.makeText(holder.itemView.context, "Se elimino exitosamente", Toast.LENGTH_SHORT).show()
@@ -47,6 +48,18 @@ class FinanceAdapter (var financeList:MutableList<Finance>, context: Context) : 
 
     fun refreshData(newFinance: List<Finance>) {
         financeList = newFinance.toMutableList()
+        filteredFinanceList = financeList
+        notifyDataSetChanged()
+    }
+
+    fun filter(query: String) {
+        filteredFinanceList = if (query.isEmpty()) {
+            financeList.toMutableList()
+        } else {
+            val result = financeList.filter { it.description.contains(query, true) }.toMutableList()
+            println("Filtered list size: ${result.size}")
+            result
+        }
         notifyDataSetChanged()
     }
 }
