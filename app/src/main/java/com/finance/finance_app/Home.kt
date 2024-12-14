@@ -19,8 +19,6 @@ import java.util.Locale
 
 
 class Home : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
 
     private lateinit var btnAdd: FloatingActionButton
     private lateinit var db: FinanceDatabaseHelper
@@ -42,8 +40,17 @@ class Home : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home,container, false)
 
         db = FinanceDatabaseHelper(requireContext())
+
+        // Init finaceList, searchList and financeAdapter
+        financeList = db.getFinances().toMutableList()//.take(10).toMutableList()
+        searchList = ArrayList<Finance>()
+        searchList.addAll(financeList)
+        financeAdapter = FinanceAdapter(searchList, requireContext())
+
+
         initListener(view)
         initRecycleView()
+        initSearchView()
         // Inflate the layout for this fragment
         return view
     }
@@ -57,8 +64,6 @@ class Home : Fragment() {
                 val intent = Intent(requireActivity(), CreateFinance::class.java)
                 startActivity(intent)
             }
-
-            //initSearchView()
         } catch (e: Exception) {
             println("Error Listener: " +  e)
             e.printStackTrace()
@@ -84,6 +89,7 @@ class Home : Fragment() {
                                 searchList.add(it)
                             }
                         }
+
                         recyclerView.adapter!!.notifyDataSetChanged()
                     } else {
                         searchList.clear()
@@ -102,9 +108,6 @@ class Home : Fragment() {
 
     private fun initRecycleView(){
         try {
-            financeList = db.getFinances().take(10).toMutableList()
-            searchList.addAll(financeList)
-            financeAdapter = FinanceAdapter(searchList, requireContext())
             // show recycleView
             val layoutManager = LinearLayoutManager(requireContext())
             recyclerView.layoutManager = layoutManager

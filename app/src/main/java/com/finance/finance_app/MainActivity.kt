@@ -23,9 +23,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
+    /*
     private lateinit var btnAdd:FloatingActionButton
     private lateinit var db: FinanceDatabaseHelper
     private lateinit var financeAdapter: FinanceAdapter
+     */
 
     private lateinit var binding: ActivityMainBinding
 
@@ -51,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 
     // function to create buttonNavigation bar
     private fun buttonNavigation(binding: ActivityMainBinding) {
-
         // create onSelect
         binding.buttonNavigationView.setOnItemSelectedListener{ item ->
             when(item.itemId) {
