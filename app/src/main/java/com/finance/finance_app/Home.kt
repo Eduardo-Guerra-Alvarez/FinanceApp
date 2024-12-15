@@ -71,31 +71,39 @@ class Home : Fragment() {
 
     }
 
+    // Init searchView to search elements
     private fun initSearchView() {
         try {
+            // Clear focus fist to init search view to avoid open keyboard
             searchView.clearFocus()
+
+            // configure listener to manage changes and text
             searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
+                    // Clean focus after to send
                     searchView.clearFocus()
-                    return true
+                    return true // Return true to indicate that the event had been manage
                 }
 
+                // this function change each time that the text changes
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    searchList.clear()
-                    val searchText = newText!!.toLowerCase(Locale.getDefault())
-                    if(searchText.isNotEmpty()) {
-                        financeList.forEach {
-                            if(it.description.toLowerCase(Locale.getDefault()).contains(searchText)) {
-                                searchList.add(it)
-                            }
-                        }
 
-                        recyclerView.adapter!!.notifyDataSetChanged()
+                    // change the text to lower case
+                    val searchText = newText?.toLowerCase(Locale.getDefault()) ?: ""
+
+                    // filter list that is not empty and
+                    val filteredList = if (searchText.isNotEmpty()) {
+                        financeList.filter {
+                            it.description.toLowerCase(Locale.getDefault()).contains(searchText)
+                        }
                     } else {
-                        searchList.clear()
-                        searchList.addAll(financeList)
-                        recyclerView.adapter!!.notifyDataSetChanged()
+                        // if there is any text then show all list
+                        financeList
                     }
+
+                    // update the adapter with the filter list
+                    (recyclerView.adapter as FinanceAdapter).updateList(filteredList.toMutableList())
+
                     return false
                 }
 

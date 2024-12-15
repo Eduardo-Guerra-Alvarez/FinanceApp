@@ -49,4 +49,10 @@ class FinanceAdapter (var financeList:MutableList<Finance>, context: Context) : 
         financeList = newFinance.toMutableList()
         notifyDataSetChanged()
     }
+
+    fun updateList(newList: List<Finance>) {
+        financeList.clear()
+        financeList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }
